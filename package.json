@@ -1,0 +1,24 @@
+{
+  "name": "node-alsa-cardinfo",
+  "version": "1.0.0",
+  "main": "main.js",
+  "keywords": [
+    "libasound",
+    "alsa",
+    "playback",
+    "capture"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node" : ">=8.0.0"
+  },
+  "description": "Get the playback and/or capture parameters (sample rates, byte formats etc.) of an ALSA card.",
+  "repository": "github:dmooney65/node-alsa-cardinfo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dmooney65/node-alsa-cardinfo/issues"
+  },
+  "homepage": "https://github.com/dmooney65/node-alsa-cardinfo#readme"
+}
