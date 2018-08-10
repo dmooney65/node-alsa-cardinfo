@@ -215,6 +215,10 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
 
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Unable to create channels array");
+    
+    if(max > 50){
+        max = 50;
+    }
 
     for (i = min; i <= max; ++i)
     {
@@ -240,6 +244,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         napi_set_named_property(env, returnObj, "error", errorText);
         return returnObj;
     }
+
     err = snd_pcm_hw_params_get_rate_max(hw_params, &max, NULL);
     if (err < 0)
     {
