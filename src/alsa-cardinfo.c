@@ -87,12 +87,11 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     snd_pcm_t *pcm;
     snd_pcm_hw_params_t *hw_params;
     uint32_t stream_type = 0;
-    uint32_t *arg1;
-    char *arg0;
+    uint32_t arg1;
+    char* arg0;
     const char *device_name = "hw";
     unsigned int i;
     unsigned int min, max;
-    int any_rate;
     int err;
     char error[80];
 
@@ -277,7 +276,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     status = napi_set_named_property(env, returnObj, "deviceType", deviceType);
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Unable to create named property");
-    status = napi_set_named_property(env, returnObj, "accesTypes", accessTypesArray);
+    status = napi_set_named_property(env, returnObj, "accessTypes", accessTypesArray);
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Unable to create named property");
     status = napi_set_named_property(env, returnObj, "sampleFormats", formatArray);

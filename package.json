@@ -9,10 +9,10 @@
     "capture"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/tests.js"
   },
   "engines": {
-    "node" : ">=8.0.0"
+    "node": ">=8.0.0"
   },
   "description": "Get the playback and/or capture parameters (sample rates, byte formats etc.) of an ALSA card.",
   "repository": "github:dmooney65/node-alsa-cardinfo",
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/dmooney65/node-alsa-cardinfo/issues"
   },
-  "homepage": "https://github.com/dmooney65/node-alsa-cardinfo#readme"
+  "homepage": "https://github.com/dmooney65/node-alsa-cardinfo#readme",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }
