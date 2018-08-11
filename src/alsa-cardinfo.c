@@ -87,8 +87,8 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     snd_pcm_t *pcm;
     snd_pcm_hw_params_t *hw_params;
     uint32_t stream_type = 0;
-    uint32_t arg1;
-    char* arg0;
+    uint32_t *arg1;
+    char *arg0;
     const char *device_name = "hw";
     unsigned int i;
     unsigned int min, max;
@@ -102,7 +102,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     napi_value formatArray;
     napi_value channelsArray;
     napi_value sampleRatesArray;
-    napi_value argv[0];
+    napi_value argv[2];
 
     napi_value returnObj;
     status = napi_create_object(env, &returnObj);
