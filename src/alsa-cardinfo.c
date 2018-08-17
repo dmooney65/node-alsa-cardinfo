@@ -132,19 +132,21 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     {
         strcpy(extError, filename);
         strcat(extError, ":");
-        char buffer[10];
+        char buffer[60];
         sprintf(buffer, "%d", line);
         strcat(extError, buffer);
         strcat(extError, "(");
         strcat(extError, function);
         strcat(extError, ") ");
-        strcat(extError, fmt);
+        sprintf(buffer, fmt, device_name, error);
+        strcat(extError, buffer);
         strcat(extError, "\0");
     };
 
     snd_lib_error_set_handler(&alsaErrorHandler);
 
-    void handle_error(){
+    void handle_error()
+    {
         napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
         napi_set_named_property(env, returnObj, "error", errorText);
         //strcpy(error, "\0");
