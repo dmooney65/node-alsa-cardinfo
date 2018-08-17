@@ -1,27 +1,32 @@
 {
-  "name": "node-alsa-cardinfo",
-  "version": "1.0.2",
-  "main": "main.js",
-  "keywords": [
-    "libasound",
-    "alsa",
-    "playback",
-    "capture"
-  ],
-  "scripts": {
-    "test": "mocha test/tests.js"
-  },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "description": "Get the playback and/or capture parameters (sample rates, byte formats etc.) of an ALSA card.",
-  "repository": "github:dmooney65/node-alsa-cardinfo",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dmooney65/node-alsa-cardinfo/issues"
-  },
-  "homepage": "https://github.com/dmooney65/node-alsa-cardinfo#readme",
-  "devDependencies": {
-    "mocha": "^5.2.0"
-  }
+    "name": "node-alsa-cardinfo",
+    "version": "1.0.2",
+    "main": "main.js",
+    "keywords": [
+        "libasound",
+        "alsa",
+        "playback",
+        "capture"
+    ],
+    "scripts": {
+        "test": "mocha test/tests.js",
+        "build:dev": "node-gyp build --debug",
+        "build": "node-gyp build",
+        "rebuild:dev": "node-gyp rebuild --debug",
+        "rebuild": "node-gyp rebuild",
+        "clean": "node-gyp clean"
+    },
+    "engines": {
+        "node": ">=8.0.0"
+    },
+    "description": "Get the playback and/or capture parameters (sample rates, byte formats etc.) of an ALSA card.",
+    "repository": "github:dmooney65/node-alsa-cardinfo",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/dmooney65/node-alsa-cardinfo/issues"
+    },
+    "homepage": "https://github.com/dmooney65/node-alsa-cardinfo#readme",
+    "devDependencies": {
+        "mocha": "^5.2.0"
+    }
 }

@@ -15,52 +15,52 @@ static const snd_pcm_access_t accesses[] = {
 static const snd_pcm_format_t formats[] = {
 
     SND_PCM_FORMAT_S8,
-	SND_PCM_FORMAT_U8,
-	SND_PCM_FORMAT_S16_LE,
-	SND_PCM_FORMAT_S16_BE,
-	SND_PCM_FORMAT_U16_LE,
-	SND_PCM_FORMAT_U16_BE,
-	SND_PCM_FORMAT_S24_LE,
-	SND_PCM_FORMAT_S24_BE,
-	SND_PCM_FORMAT_U24_LE,
-	SND_PCM_FORMAT_U24_BE,
-	SND_PCM_FORMAT_S32_LE,
-	SND_PCM_FORMAT_S32_BE,
-	SND_PCM_FORMAT_U32_LE,
-	SND_PCM_FORMAT_U32_BE,
-	SND_PCM_FORMAT_FLOAT_LE,
-	SND_PCM_FORMAT_FLOAT_BE,
-	SND_PCM_FORMAT_FLOAT64_LE,
-	SND_PCM_FORMAT_FLOAT64_BE,
-	SND_PCM_FORMAT_IEC958_SUBFRAME_LE,
-	SND_PCM_FORMAT_IEC958_SUBFRAME_BE,
-	SND_PCM_FORMAT_MU_LAW,
-	SND_PCM_FORMAT_A_LAW,
-	SND_PCM_FORMAT_IMA_ADPCM,
-	SND_PCM_FORMAT_MPEG,
-	SND_PCM_FORMAT_GSM,
-	SND_PCM_FORMAT_SPECIAL,
-	SND_PCM_FORMAT_S24_3LE,
-	SND_PCM_FORMAT_S24_3BE,
-	SND_PCM_FORMAT_U24_3LE,
-	SND_PCM_FORMAT_U24_3BE,
-	SND_PCM_FORMAT_S20_3LE,
-	SND_PCM_FORMAT_S20_3BE,
-	SND_PCM_FORMAT_U20_3LE,
-	SND_PCM_FORMAT_U20_3BE,
-	SND_PCM_FORMAT_S18_3LE,
-	SND_PCM_FORMAT_S18_3BE,
-	SND_PCM_FORMAT_U18_3LE,
-	SND_PCM_FORMAT_U18_3BE,
-	SND_PCM_FORMAT_G723_24,
-	SND_PCM_FORMAT_G723_24_1B,
-	SND_PCM_FORMAT_G723_40,
-	SND_PCM_FORMAT_G723_40_1B,
-	SND_PCM_FORMAT_DSD_U8,
-	SND_PCM_FORMAT_DSD_U16_LE,
-	SND_PCM_FORMAT_DSD_U32_LE,
-	SND_PCM_FORMAT_DSD_U16_BE,
-	SND_PCM_FORMAT_DSD_U32_BE,
+    SND_PCM_FORMAT_U8,
+    SND_PCM_FORMAT_S16_LE,
+    SND_PCM_FORMAT_S16_BE,
+    SND_PCM_FORMAT_U16_LE,
+    SND_PCM_FORMAT_U16_BE,
+    SND_PCM_FORMAT_S24_LE,
+    SND_PCM_FORMAT_S24_BE,
+    SND_PCM_FORMAT_U24_LE,
+    SND_PCM_FORMAT_U24_BE,
+    SND_PCM_FORMAT_S32_LE,
+    SND_PCM_FORMAT_S32_BE,
+    SND_PCM_FORMAT_U32_LE,
+    SND_PCM_FORMAT_U32_BE,
+    SND_PCM_FORMAT_FLOAT_LE,
+    SND_PCM_FORMAT_FLOAT_BE,
+    SND_PCM_FORMAT_FLOAT64_LE,
+    SND_PCM_FORMAT_FLOAT64_BE,
+    SND_PCM_FORMAT_IEC958_SUBFRAME_LE,
+    SND_PCM_FORMAT_IEC958_SUBFRAME_BE,
+    SND_PCM_FORMAT_MU_LAW,
+    SND_PCM_FORMAT_A_LAW,
+    SND_PCM_FORMAT_IMA_ADPCM,
+    SND_PCM_FORMAT_MPEG,
+    SND_PCM_FORMAT_GSM,
+    SND_PCM_FORMAT_SPECIAL,
+    SND_PCM_FORMAT_S24_3LE,
+    SND_PCM_FORMAT_S24_3BE,
+    SND_PCM_FORMAT_U24_3LE,
+    SND_PCM_FORMAT_U24_3BE,
+    SND_PCM_FORMAT_S20_3LE,
+    SND_PCM_FORMAT_S20_3BE,
+    SND_PCM_FORMAT_U20_3LE,
+    SND_PCM_FORMAT_U20_3BE,
+    SND_PCM_FORMAT_S18_3LE,
+    SND_PCM_FORMAT_S18_3BE,
+    SND_PCM_FORMAT_U18_3LE,
+    SND_PCM_FORMAT_U18_3BE,
+    SND_PCM_FORMAT_G723_24,
+    SND_PCM_FORMAT_G723_24_1B,
+    SND_PCM_FORMAT_G723_40,
+    SND_PCM_FORMAT_G723_40_1B,
+    SND_PCM_FORMAT_DSD_U8,
+    SND_PCM_FORMAT_DSD_U16_LE,
+    SND_PCM_FORMAT_DSD_U32_LE,
+    SND_PCM_FORMAT_DSD_U16_BE,
+    SND_PCM_FORMAT_DSD_U32_BE,
 };
 
 static const unsigned int rates[] = {
@@ -79,24 +79,25 @@ static const unsigned int rates[] = {
     192000,
 };
 
-
 napi_value GetCardInfo(napi_env env, napi_callback_info info)
 {
-    size_t *result = 0;
+    size_t result = 0;
     size_t argc = 2;
     snd_pcm_t *pcm;
     snd_pcm_hw_params_t *hw_params;
     uint32_t stream_type = 0;
     uint32_t *arg1;
-    char *arg0;
+    char arg0;
     const char *device_name = "hw";
     unsigned int i;
     unsigned int min, max;
     int err;
-    char error[80];
+    char error[80] = {"\0"};
+    char extError[200] = {"\0"};
 
     napi_status status;
     napi_value errorText;
+    napi_value extErrorText;
     napi_value deviceType;
     napi_value accessTypesArray;
     napi_value formatArray;
@@ -108,7 +109,6 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     status = napi_create_object(env, &returnObj);
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Unable to create return object");
-
 
     status = napi_get_cb_info(env, info, &argc, argv, NULL, NULL);
 
@@ -128,6 +128,34 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         }
     }
 
+    void alsaErrorHandler(const char *filename, int line, const char *function, int error, const char *fmt, ...)
+    {
+        strcpy(extError, filename);
+        strcat(extError, ":");
+        char buffer[10];
+        sprintf(buffer, "%d", line);
+        strcat(extError, buffer);
+        strcat(extError, "(");
+        strcat(extError, function);
+        strcat(extError, ") ");
+        strcat(extError, fmt);
+        strcat(extError, "\0");
+    };
+
+    snd_lib_error_set_handler(&alsaErrorHandler);
+
+    void handle_error(){
+        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
+        napi_set_named_property(env, returnObj, "error", errorText);
+        //strcpy(error, "\0");
+        if (strlen(extError) > 0)
+        {
+            napi_create_string_utf8(env, extError, NAPI_AUTO_LENGTH, &extErrorText);
+            napi_set_named_property(env, returnObj, "errorDetails", extErrorText);
+            //strcpy(extError, "\0");
+        }
+    }
+
     err = snd_pcm_open(&pcm, device_name, stream_type, SND_PCM_NONBLOCK);
     if (err < 0)
     {
@@ -136,8 +164,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, " - ");
         strcat(error, snd_strerror(err));
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
@@ -149,13 +176,12 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
     napi_create_string_utf8(env, snd_pcm_type_name(snd_pcm_type(pcm)), NAPI_AUTO_LENGTH, &deviceType);
-        
+
     napi_create_array(env, &accessTypesArray);
 
     for (i = 0; i < ARRAY_SIZE(accesses); ++i)
@@ -193,8 +219,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
@@ -205,8 +230,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
@@ -214,8 +238,9 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
 
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Unable to create channels array");
-    
-    if(max > 50){
+
+    if (max > 50)
+    {
         max = 50;
     }
 
@@ -239,8 +264,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
@@ -251,8 +275,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
-        napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText);
-        napi_set_named_property(env, returnObj, "error", errorText);
+        handle_error();
         return returnObj;
     }
 
