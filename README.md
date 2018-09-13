@@ -24,11 +24,13 @@ The card name will default to `hw` if not specified and the device direction def
 ## Return values
 
 If the device name requested is valid, an object will be returned of the form:<br>
-`{ deviceType: 'HW',`<br>
-&nbsp;&nbsp;&nbsp;`accesTypes: [ 'MMAP_INTERLEAVED', 'RW_INTERLEAVED' ],`<br>
-&nbsp;&nbsp;&nbsp;`sampleFormats: [ 'S16_LE', 'S32_LE' ],`<br>
-&nbsp;&nbsp;&nbsp;`channels: [ 2, 4, 6, 8 ],`<br>
-&nbsp;&nbsp;&nbsp;`sampleRates: [ 44100, 48000, 96000, 192000 ] }`<br>
+```json
+{ deviceType: 'HW',
+  accessTypes: [ 'MMAP_INTERLEAVED', 'RW_INTERLEAVED' ],
+  sampleFormats: [ 'S16_LE', 'S32_LE' ],
+  channels: [ 2, 4, 6, 8 ],
+  sampleRates: [ 44100, 48000, 96000, 192000 ] }
+```
 
 For more information on the returned values, consult the [alsaaudio documentation](https://larsimmisch.github.io/pyalsaaudio/libalsaaudio.html).
 
