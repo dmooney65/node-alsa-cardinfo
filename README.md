@@ -24,7 +24,7 @@ The card name will default to `hw` if not specified and the device direction def
 ## Return values
 
 If the device name requested is valid, an object will be returned of the form:<br>
-```json
+```
 { deviceType: 'HW',
   accessTypes: [ 'MMAP_INTERLEAVED', 'RW_INTERLEAVED' ],
   sampleFormats: [ 'S16_LE', 'S32_LE' ],
