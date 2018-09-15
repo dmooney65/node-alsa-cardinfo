@@ -1,4 +1,4 @@
-const cardinfo = require('./build/Release/alsa_cardinfo');
+const cardinfo = require('bindings')('alsa_cardinfo');
 
 module.exports.get = (card = 'hw', type) => {
     return cardinfo.get_card_info(card, type);
