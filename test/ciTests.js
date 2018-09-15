@@ -25,15 +25,7 @@ describe('cardinfo.get CI', function () {
         done();
     });
 
-    it('should return correct deviceType for plughw', function (done) {
-        
-        var info = cardinfo.get('plughw');
-        assert(info.deviceType, 'Should have valid response for devault values');
-        assert.strictEqual(info.deviceType, 'PLUG', 'Should return value');
-        done();
-    });
-
-    it('should return all values for valid playback device', function (done) {
+    it('should return all values for NULL playback device', function (done) {
         
         var info = cardinfo.get('null',cardinfo.PLAYBACK);
         assert(info.deviceType, 'Should have deviceType');
@@ -46,7 +38,7 @@ describe('cardinfo.get CI', function () {
         done();
     });
 
-    it('should populate arrays for valid playback device', function (done) {
+    it('should populate arrays for NULL playback device', function (done) {
         
         var info = cardinfo.get('null',cardinfo.PLAYBACK);
         var accessTypesArray = info.accessTypes;
@@ -60,7 +52,7 @@ describe('cardinfo.get CI', function () {
         done();
     });
 
-    it('should return all values for valid capture device', function (done) {
+    it('should return all values for NULL capture device', function (done) {
         
         var info = cardinfo.get('null',cardinfo.CAPTURE);
         assert(info.deviceType, 'Should have deviceType');
@@ -73,7 +65,7 @@ describe('cardinfo.get CI', function () {
         done();
     });
 
-    it('should populate arrays for valid capture device', function (done) {
+    it('should populate arrays for NULL capture device', function (done) {
         
         var info = cardinfo.get('null',cardinfo.CAPTURE);
         var accessTypesArray = info.accessTypes;
