@@ -58,9 +58,9 @@ static const snd_pcm_format_t formats[] = {
     SND_PCM_FORMAT_G723_40_1B,
     SND_PCM_FORMAT_DSD_U8,
     SND_PCM_FORMAT_DSD_U16_LE,
-    SND_PCM_FORMAT_DSD_U32_LE,
-    SND_PCM_FORMAT_DSD_U16_BE,
-    SND_PCM_FORMAT_DSD_U32_BE,
+    //SND_PCM_FORMAT_DSD_U32_LE,
+    //SND_PCM_FORMAT_DSD_U16_BE,
+    //SND_PCM_FORMAT_DSD_U32_BE,
 };
 
 static const unsigned int rates[] = {
@@ -95,6 +95,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     char error[80] = {"\0"};
     char extError[200] = {"\0"};
 
+    napi_value argv[2];
     napi_status status;
     napi_value errorText;
     napi_value extErrorText;
@@ -103,7 +104,8 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     napi_value formatArray;
     napi_value channelsArray;
     napi_value sampleRatesArray;
-    napi_value argv[2];
+    napi_value periodTime;
+    napi_value bufferTime;
 
     napi_value returnObj;
     status = napi_create_object(env, &returnObj);
@@ -115,7 +117,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Failed to parse arguments");
 
-    status = napi_get_value_string_utf8(env, argv[0], &arg0, 20, &result);
+    status = napi_get_value_string_utf8(env, argv[0], &arg0, NULL, &result);
 
     if (status == napi_ok)
     {
@@ -296,6 +298,42 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         }
     }
 
+    /*err = snd_pcm_hw_params_get_period_time_min(hw_params, &min, NULL);
+    if (err < 0)
+    {
+        fprintf(stderr, "cannot get minimum period time: %s\n",
+                snd_strerror(err));
+        snd_pcm_close(pcm);
+        return;
+    }
+    err = snd_pcm_hw_params_get_period_time_max(hw_params, &max, NULL);
+    if (err < 0)
+    {
+        fprintf(stderr, "cannot get maximum period time: %s\n",
+                snd_strerror(err));
+        snd_pcm_close(pcm);
+        return;
+    }
+    printf("Interrupt interval: %u-%u us\n", min, max);
+
+    err = snd_pcm_hw_params_get_buffer_time_min(hw_params, &min, NULL);
+    if (err < 0)
+    {
+        fprintf(stderr, "cannot get minimum buffer time: %s\n",
+                snd_strerror(err));
+        snd_pcm_close(pcm);
+        return ;
+    }
+    err = snd_pcm_hw_params_get_buffer_time_max(hw_params, &max, NULL);
+    if (err < 0)
+    {
+        fprintf(stderr, "cannot get maximum buffer time: %s\n",
+                snd_strerror(err));
+        snd_pcm_close(pcm);
+        return;
+    }
+
+    printf("Buffer size: %u-%u us\n", min, max);*/
     snd_pcm_close(pcm);
 
     status = napi_set_named_property(env, returnObj, "deviceType", deviceType);
