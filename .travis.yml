@@ -21,12 +21,12 @@ matrix:
 
 before_install:
 #    - npm i -g npm@latest
-    - if [ -z "ARCH" ]; then sudo apt-get install -y libasound2-dev; fi
-    - if [ -n "ARCH" ]; then sudo apt-get install libasound-dev:armhf; fi
+    - if [ -z "$ARCH" ]; then sudo apt-get install -y libasound2-dev; fi
+    - if [ -n "$ARCH" ]; then sudo apt-get install libasound2-dev:armhf; fi
 
 install:
   - if [ -n "$ARCH" ]; then bash ./build-arm.sh; fi
   - if [ -z "$ARCH" ]; then npm install; fi
 
 script:
-    - if [ -z "ARCH" ]; then npm run test:ci; fi
+    - if [ -z "$ARCH" ]; then npm run test:ci; fi
