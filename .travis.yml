@@ -1,16 +1,32 @@
-dist: trusty
 language: node_js
 
 sudo: true
 
 node_js:
     - "8"
-    - "9"
-    - "10"
+#    - "10"
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      env:
+        - DEPLOY="true"
+        - MAIN="true"
+    - os: linux
+      dist: trusty
+      env:
+        - DEPLOY="false"
+        - ARCH="arm"
 
 before_install:
-    - npm i -g npm@latest
-    - sudo apt-get install -y libasound2-dev
+#    - npm i -g npm@latest
+    - if [ -z "ARCH" ]; then sudo apt-get install -y libasound2-dev; fi
+    - if [ -n "ARCH" ]; then sudo apt-get install libasound-dev:armhf; fi
+
+install:
+  - if [ -n "$ARCH" ]; then bash ./build-arm.sh; fi
+  - if [ -z "$ARCH" ]; then npm install; fi
 
 script:
-    - npm run test:ci
+    - if [ -z "ARCH" ]; then npm run test:ci; fi

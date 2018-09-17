@@ -86,7 +86,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     snd_pcm_t *pcm;
     snd_pcm_hw_params_t *hw_params;
     uint32_t stream_type = 0;
-    uint32_t *arg1;
+    uint32_t arg1 = 0;
     char *arg0;
     const char *device_name = "hw";
     unsigned int i;
@@ -104,8 +104,8 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     napi_value formatArray;
     napi_value channelsArray;
     napi_value sampleRatesArray;
-    napi_value periodTime;
-    napi_value bufferTime;
+    //napi_value periodTime;
+    //napi_value bufferTime;
 
     napi_value returnObj;
     status = napi_create_object(env, &returnObj);
@@ -117,11 +117,16 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     if (status != napi_ok)
         napi_throw_error(env, NULL, "Failed to parse arguments");
 
-    status = napi_get_value_string_utf8(env, argv[0], &arg0, NULL, &result);
+    status = napi_get_value_string_utf8(env, argv[0], NULL, 0, &result);
+    if (status != napi_ok)
+        napi_throw_error(env, NULL, "Failed to get argument 0");
+
+    arg0 = (char*)malloc(result + 1);
+    status = napi_get_value_string_utf8(env, argv[0], arg0, result + 1, &result);
 
     if (status == napi_ok)
     {
-        device_name = &arg0;
+        device_name = arg0;
         status = napi_get_value_uint32(env, argv[1], &arg1);
 
         if (status == napi_ok)

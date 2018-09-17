@@ -6,10 +6,13 @@
         "libasound",
         "alsa",
         "playback",
-        "capture"
+        "capture",
+        "audio",
+        "card",
+        "capabilities"
     ],
     "scripts": {
-        "test": "mocha",
+        "test": "mocha test/tests.js",
         "test:ci": "mocha test/ciTests.js",
         "build:dev": "node-gyp build --debug",
         "build": "node-gyp build",
