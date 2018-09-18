@@ -1,32 +1,20 @@
 language: node_js
-
+os: linux
+dist: trusty
 sudo: true
-
 node_js:
-    - "8"
-#    - "10"
-
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      env:
-        - DEPLOY="true"
-        - MAIN="true"
-    - os: linux
-      dist: trusty
-      env:
-        - DEPLOY="false"
-        - ARCH="arm"
-
+- '8'
+- '10'
 before_install:
-#    - npm i -g npm@latest
-    - if [ -z "$ARCH" ]; then sudo apt-get install -y libasound2-dev; fi
-    - if [ -n "$ARCH" ]; then sudo apt-get install -y libc6-dev-armhf-cross linux-libc-dev-armhf-cross g++-arm-linux-gnueabihf && sudo sed 's~\(\(deb\(-src\)*\) \([^\[]\)\)~\2 [arch=amd64] \4~' /etc/apt/sources.list | sudo tee /etc/apt/sources.list && sudo bash -c 'echo "deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports/ trusty main multiverse restricted universe" > /etc/apt/sources.list.d/arm-repo.list' && sudo dpkg --add-architecture armhf && sudo apt-get update && sudo apt-get install -y libasound2-dev:armhf; fi
-
-install:
-  - if [ -n "$ARCH" ]; then bash ./build-arm.sh; fi
-  - if [ -z "$ARCH" ]; then npm install; fi
-
+- npm i -g npm@latest
+- sudo apt-get install -y libasound2-dev
 script:
-    - if [ -z "$ARCH" ]; then npm run test:ci; fi
+- npm run test:ci
+deploy:
+  provider: npm
+  email: dominic.mooney99@gmail.com
+  api_key:
+    secure: qnLZvPlNckfp14ND9H2I6Fgr8h60S2b6lmS7QyvhxRYa/0HQFeyT1fbnTKsR89+xNTweuxq9ZzELLq5Lt+aTPyGo22hLNXhL+jmspum0xMP1xvIGcYMz0NUcELp+84Ad0wS1r3FUcfn63ZcB8EIKCO3U0n5zD/SCXD/+cZSTlY3PY+vhxYf04V/2DHSksOD05PBYoAechg439XJASH9ikkFrAKvMUGT/aWnmDlqWoZt1/O8gcQBOcRaqaPzJXy+2QMMciGVLXIfHlmB7dn5ktQ5wg0iJ6zOd616NgA8YxjrkOJN58r4hLwukA7lTgzFwCY2mTPtIwx33MOeKKLG/EYLPAstOMaPUczHKVUTBwNbqn5Mbc74qPshJ5wqCtgjoavJwHT+OjoaToBMF014HQbVeLFrQF/uKInaiRFKFju58cNrOoJ4vSjdsjBYLt/S+022xBcc9hnzNHL1P6ENvyFa0yKS9QzsakBA3NP3v47NGN75H/KniVoui71lHVsHhAnCh6pNZFU3UpgYXWDXw/gwmr6FlelGnZpSyrx/GJ758H88b1gZ4tcK2RxuFoAoJYhEhdPdHJVcmcESVSnK28KJCtKQfjTdYRursQHDFjRkdWHQyMqcyUlP+pS0mGTzyqRZ0XHp+JzxTUukBmeU5/jlqTFq6j4ouQS0RnkVLLQI=
+  on:
+    tags: true
+    repo: dmooney65/node-alsa-cardinfo
