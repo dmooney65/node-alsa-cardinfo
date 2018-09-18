@@ -16,14 +16,6 @@ describe('cardinfo.get CI', function () {
         assert.strictEqual(info.error,'cannot open device: invalid_value - No such file or directory','Should return correct error value');
         done();
     });
-    
-    it('should return error for incorrect card value', function (done) {
-
-        var info = cardinfo.get('hw:3,0');
-        assert(info.error, 'Error should be propagated for invalid device');
-        assert.strictEqual(info.error,'cannot open device: hw:3,0 - No such file or directory','Should return correct error value');
-        done();
-    });
 
     it('should return all values for NULL playback device', function (done) {
         
