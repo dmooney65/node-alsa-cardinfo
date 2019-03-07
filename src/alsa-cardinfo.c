@@ -3,6 +3,7 @@
 #include <alsa/asoundlib.h>
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof *(a))
+#define NAPI_CHECK( napi_call, err_msg) status = napi_call; if (status != napi_ok) napi_throw_error(env, NULL, err_msg)
 
 static const snd_pcm_access_t accesses[] = {
     SND_PCM_ACCESS_MMAP_INTERLEAVED,
@@ -108,18 +109,9 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     //napi_value bufferTime;
 
     napi_value returnObj;
-    status = napi_create_object(env, &returnObj);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create return object");
-
-    status = napi_get_cb_info(env, info, &argc, argv, NULL, NULL);
-
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Failed to parse arguments");
-
-    status = napi_get_value_string_utf8(env, argv[0], NULL, 0, &result);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Failed to get argument 0");
+    NAPI_CHECK( napi_create_object(env, &returnObj), "Unable to create return object");
+    NAPI_CHECK( napi_get_cb_info(env, info, &argc, argv, NULL, NULL), "Failed to parse arguments");
+    NAPI_CHECK( napi_get_value_string_utf8(env, argv[0], NULL, 0, &result), "Failed to get argument 0");
 
     arg0 = (char*)malloc(result + 1);
     status = napi_get_value_string_utf8(env, argv[0], arg0, result + 1, &result);
@@ -189,35 +181,39 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         return returnObj;
     }
 
-    napi_create_string_utf8(env, snd_pcm_type_name(snd_pcm_type(pcm)), NAPI_AUTO_LENGTH, &deviceType);
+    NAPI_CHECK( 
+        napi_create_string_utf8(env, snd_pcm_type_name(snd_pcm_type(pcm)), NAPI_AUTO_LENGTH, &deviceType), 
+        "Could not create napi string for deviceType");
 
-    napi_create_array(env, &accessTypesArray);
+    NAPI_CHECK( napi_create_array(env, &accessTypesArray), "Could not crate NAPI array accessTypesArray");
 
     for (i = 0; i < ARRAY_SIZE(accesses); ++i)
     {
         if (!snd_pcm_hw_params_test_access(pcm, hw_params, accesses[i]))
         {
             napi_value accessType;
-            napi_create_string_utf8(env, snd_pcm_access_name(accesses[i]), NAPI_AUTO_LENGTH, &accessType);
+            NAPI_CHECK(
+                napi_create_string_utf8(env, snd_pcm_access_name(accesses[i]), NAPI_AUTO_LENGTH, &accessType),
+                "Count not creat NAPI string accessType");
 
             uint32_t index;
-            napi_get_array_length(env, accessTypesArray, &index);
-            napi_set_element(env, accessTypesArray, index, accessType);
+            NAPI_CHECK( napi_get_array_length(env, accessTypesArray, &index), "Count not get array length of accessTypesArray");
+            NAPI_CHECK( napi_set_element(env, accessTypesArray, index, accessType), "Could not add element to array accessType");
         }
     }
 
-    napi_create_array(env, &formatArray);
+    NAPI_CHECK(napi_create_array(env, &formatArray), "Could not create array formatArray");
 
     for (i = 0; i < ARRAY_SIZE(formats); ++i)
     {
         if (!snd_pcm_hw_params_test_format(pcm, hw_params, formats[i]))
         {
             napi_value format;
-            napi_create_string_utf8(env, snd_pcm_format_name(formats[i]), NAPI_AUTO_LENGTH, &format);
+            NAPI_CHECK( napi_create_string_utf8(env, snd_pcm_format_name(formats[i]), NAPI_AUTO_LENGTH, &format), "Could not create NAPI string format");
 
             uint32_t index;
-            napi_get_array_length(env, formatArray, &index);
-            napi_set_element(env, formatArray, index, format);
+            NAPI_CHECK( napi_get_array_length(env, formatArray, &index), "Could not get array length of formatArray");
+            NAPI_CHECK( napi_set_element(env, formatArray, index, format), "Could not append element to array formatArray");
         }
     }
 
@@ -243,10 +239,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         return returnObj;
     }
 
-    status = napi_create_array(env, &channelsArray);
-
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create channels array");
+    NAPI_CHECK( napi_create_array(env, &channelsArray), "Unable to create channels array");
 
     if (max > 50)
     {
@@ -258,14 +251,15 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         if (!snd_pcm_hw_params_test_channels(pcm, hw_params, i))
         {
             napi_value channel;
-            napi_create_int32(env, i, &channel);
+            NAPI_CHECK( napi_create_int32(env, i, &channel), "Counld not create integer channel");
 
             uint32_t index;
-            napi_get_array_length(env, channelsArray, &index);
-            napi_set_element(env, channelsArray, index, channel);
+            NAPI_CHECK( napi_get_array_length(env, channelsArray, &index), "Could not get length of array channelsArray");
+            NAPI_CHECK( napi_set_element(env, channelsArray, index, channel), "Could not append element to channelsArray");
         }
     }
 
+    // define GET_HARDWARE_PARAM
     err = snd_pcm_hw_params_get_rate_min(hw_params, &min, NULL);
     if (err < 0)
     {
@@ -288,18 +282,18 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         return returnObj;
     }
 
-    status = napi_create_array(env, &sampleRatesArray);
+    NAPI_CHECK( napi_create_array(env, &sampleRatesArray), "Could not create array sampleRatesArray");
 
     for (i = 0; i < ARRAY_SIZE(rates); ++i)
     {
         if (!snd_pcm_hw_params_test_rate(pcm, hw_params, rates[i], 0))
         {
             napi_value sampleRate;
-            napi_create_uint32(env, rates[i], &sampleRate);
+            NAPI_CHECK( napi_create_uint32(env, rates[i], &sampleRate), "Could not create NAPI integer sampleRate");
 
             uint32_t index;
-            napi_get_array_length(env, sampleRatesArray, &index);
-            napi_set_element(env, sampleRatesArray, index, sampleRate);
+            NAPI_CHECK( napi_get_array_length(env, sampleRatesArray, &index), "Could not get length of array sampleRatesArray");
+            NAPI_CHECK( napi_set_element(env, sampleRatesArray, index, sampleRate), "Could not append element to sampleRatesArray");
         }
     }
 
@@ -339,25 +333,139 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     }
 
     printf("Buffer size: %u-%u us\n", min, max);*/
+
+    snd_pcm_info_t *info_t;
+    err = snd_pcm_info_malloc(&info_t);
+    err = snd_pcm_info(pcm, info_t);
+
+    //todo add these as named properties
+    int card = snd_pcm_info_get_card(info_t);
+    int device_id = snd_pcm_info_get_device(info_t);
+    int subdevice_id = snd_pcm_info_get_subdevice(info_t);
+
+    napi_value napiCard, napiDeviceId, napiSubdeviceId;
+
+    NAPI_CHECK( napi_create_int32(env, card, &napiCard), "Could not create integer napiCard");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "cardNum", napiCard), "Could not set property cardNum");
+    NAPI_CHECK( napi_create_int32(env, device_id, &napiDeviceId), "Could not create integer napiDeviceId");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "devNum", napiDeviceId), "Could not set property devNum");
+    NAPI_CHECK( napi_create_int32(env, subdevice_id, &napiSubdeviceId), "Could not create integer napiSebdeviceId");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "subDevNum", napiSubdeviceId), "Could not set property subDevNum");
+
+    napi_value id;
+    NAPI_CHECK( napi_create_string_utf8(env,  snd_pcm_info_get_id(info_t), NAPI_AUTO_LENGTH, &id), "Cound not create string id");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "id", id), "Could not set property id");
+
+    napi_value name;
+    NAPI_CHECK( napi_create_string_utf8(env, snd_pcm_info_get_name(info_t), NAPI_AUTO_LENGTH, &name), "Could not create string name");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "name", name), "Cound not set property name");
+
+    napi_value sub_name;
+    NAPI_CHECK( napi_create_string_utf8(env, snd_pcm_info_get_subdevice_name(info_t), NAPI_AUTO_LENGTH, &sub_name), "Could not create string sub_name");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "subName", sub_name), "Could not set property subName");
+
+    snd_pcm_info_free(info_t);
+
     snd_pcm_close(pcm);
 
-    status = napi_set_named_property(env, returnObj, "deviceType", deviceType);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create named property");
-    status = napi_set_named_property(env, returnObj, "accessTypes", accessTypesArray);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create named property");
-    status = napi_set_named_property(env, returnObj, "sampleFormats", formatArray);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create named property");
-    status = napi_set_named_property(env, returnObj, "channels", channelsArray);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create named property");
-    status = napi_set_named_property(env, returnObj, "sampleRates", sampleRatesArray);
-    if (status != napi_ok)
-        napi_throw_error(env, NULL, "Unable to create named property");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "deviceType", deviceType), "Unable to create named property: deviceType");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "accessTypes", accessTypesArray), "Unable to create named property: accessTypes");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "sampleFormats", formatArray), "Unable to create named property: sampleFormats");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "channels", channelsArray), "Unable to create named property: channels");
+    NAPI_CHECK( napi_set_named_property(env, returnObj, "sampleRates", sampleRatesArray), "Unable to create named property: sampleRates");
 
     return returnObj;
+}
+
+napi_value EnumeratePcmDevices(napi_env env, napi_callback_info info)
+{
+    int err;
+    char error[80] = {"\0"};
+    char extError[200] = {"\0"};
+
+    napi_status status;
+    napi_value errorText;
+    napi_value extErrorText;
+    napi_value deviceArray;
+
+    napi_value returnObj;
+    NAPI_CHECK( napi_create_object(env, &returnObj), "Unable to create return object");
+
+    void handle_error()
+    {
+        NAPI_CHECK( napi_create_string_utf8(env, error, NAPI_AUTO_LENGTH, &errorText), "Could not create string errorText");
+        NAPI_CHECK( napi_set_named_property(env, returnObj, "error", errorText), "Could not set property 'error'");
+        if (strlen(extError) > 0)
+        {
+            NAPI_CHECK( napi_create_string_utf8(env, extError, NAPI_AUTO_LENGTH, &extErrorText), "Could not create string extErrorText");
+            NAPI_CHECK( napi_set_named_property(env, returnObj, "errorDetails", extErrorText), "Could not set property errorDetails");
+        }
+    }
+
+    NAPI_CHECK( napi_create_array(env, &deviceArray), "Could not create array deviceArray");
+
+    char **hints;
+    /* Enumerate sound devices */
+    err = snd_device_name_hint(-1, "pcm", (void***)&hints);
+    if (err != 0)
+    {
+        strcpy(error, "cannot get device list: ");
+        strcat(error, " - ");
+        strcat(error, snd_strerror(err));
+
+        handle_error();
+        return returnObj;
+    }
+
+    napi_value deviceObj;
+    char** n = hints;
+    while (*n != NULL) {
+        char *name = snd_device_name_get_hint(*n, "NAME");
+        char *descr = snd_device_name_get_hint(*n, "DESC");
+		char *io = snd_device_name_get_hint(*n, "IOID");
+
+        //device name and napi object instantiation
+        if(name != NULL) {
+            status = napi_create_object(env, &deviceObj);
+
+            napi_value deviceName;
+            NAPI_CHECK( napi_create_string_utf8(env, name, NAPI_AUTO_LENGTH, &deviceName), "Could not create string deviceName");
+            NAPI_CHECK( napi_set_named_property(env, deviceObj, "name", deviceName), "Could not set property 'name'");
+
+            //device description
+            if(descr != NULL){
+                napi_value deviceDesc;
+                NAPI_CHECK( napi_create_string_utf8(env, descr, NAPI_AUTO_LENGTH, &deviceDesc), "Could not create string deviceDesc");
+                NAPI_CHECK( napi_set_named_property(env, deviceObj, "desc", deviceDesc), "Could not set property 'desc'");
+            }
+
+            //device io direction - One of "Bidirectional", "Input" or "Output"
+            char *bio = io;
+            if(bio == NULL)
+                bio = "Bidirectional";
+            napi_value deviceIo;
+            NAPI_CHECK( napi_create_string_utf8(env, bio, NAPI_AUTO_LENGTH, &deviceIo), "Could not create string deviceIo");
+            NAPI_CHECK( napi_set_named_property(env, deviceObj, "io", deviceIo), "Could not set property 'io'");
+
+            //add device object to return array
+            uint32_t index;
+            NAPI_CHECK( napi_get_array_length(env, deviceArray, &index), "Could not get length of deviceArray");
+            NAPI_CHECK( napi_set_element(env, deviceArray, index, deviceObj), "Could not append element to deviceArray");
+        }
+
+        if(name != NULL)
+            free(name);
+        if(descr != NULL)
+            free(descr);
+        if(io != NULL)
+            free(io);
+        n++;
+    }
+
+    //Free hint buffer too
+    snd_device_name_free_hint((void**)hints);
+
+    return deviceArray;
 }
 
 napi_value Init(napi_env env, napi_value exports)
@@ -365,17 +473,10 @@ napi_value Init(napi_env env, napi_value exports)
     napi_status status;
     napi_value fn;
 
-    status = napi_create_function(env, NULL, 0, GetCardInfo, NULL, &fn);
-    if (status != napi_ok)
-    {
-        napi_throw_error(env, NULL, "Unable to wrap native function");
-    }
-
-    status = napi_set_named_property(env, exports, "get_card_info", fn);
-    if (status != napi_ok)
-    {
-        napi_throw_error(env, NULL, "Unable to populate exports");
-    }
+    NAPI_CHECK( napi_create_function(env, NULL, 0, GetCardInfo, NULL, &fn), "Unable to wrap native function");
+    NAPI_CHECK( napi_set_named_property(env, exports, "get_card_info", fn), "Unable to populate exports");
+    NAPI_CHECK( napi_create_function(env, NULL, 0, EnumeratePcmDevices, NULL, &fn), "Unable to wrap native function");
+    NAPI_CHECK( napi_set_named_property(env, exports, "enumerate_cards", fn), "Unable to populate exports");
 
     return exports;
 }
