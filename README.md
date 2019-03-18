@@ -83,6 +83,3 @@ If there is an error, an object with `error` and `errorDetails` properties will 
 `{ error: 'cannot open device: hw:0,0 - Device or resource busy',`<br>
 &nbsp;&nbsp;&nbsp;`errorDetails: 'pcm_hw.c:1590(snd_pcm_hw_open) open \'hw:0,0\' failed (16)' }`
 
-## KNOWN ISSUES
-
-`list` cannot be called after a `get` call is made.

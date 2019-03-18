@@ -165,6 +165,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, " - ");
         strcat(error, snd_strerror(err));
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -177,6 +178,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -224,6 +226,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -235,6 +238,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -267,6 +271,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -278,6 +283,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -374,6 +380,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     NAPI_CHECK( napi_set_named_property(env, returnObj, "channels", channelsArray), "Unable to create named property: channels");
     NAPI_CHECK( napi_set_named_property(env, returnObj, "sampleRates", sampleRatesArray), "Unable to create named property: sampleRates");
 
+    snd_lib_error_set_handler(NULL);
     return returnObj;
 }
 
@@ -381,7 +388,7 @@ napi_value EnumeratePcmDevices(napi_env env, napi_callback_info info)
 {
     int err;
     char error[80] = {"\0"};
-    char extError[200] = {"\0"};
+    char extError[400] = {"\0"};
 
     napi_status status;
     napi_value errorText;
@@ -389,6 +396,24 @@ napi_value EnumeratePcmDevices(napi_env env, napi_callback_info info)
     napi_value deviceArray;
 
     napi_value returnObj;
+
+    void alsaErrorHandler(const char *filename, int line, const char *function, int error, const char *fmt, ...)
+    {
+        strcpy(extError, filename);
+        strcat(extError, ":");
+        char buffer[60];
+        sprintf(buffer, "%d", line);
+        strcat(extError, buffer);
+        strcat(extError, "(");
+        strcat(extError, function);
+        strcat(extError, ")");
+        sprintf(buffer, " error_number:%d ", error);
+        strcat(extError, buffer);
+        strcat(extError, "\0");
+    };
+
+    snd_lib_error_set_handler(&alsaErrorHandler);
+
     NAPI_CHECK( napi_create_object(env, &returnObj), "Unable to create return object");
 
     void handle_error()
@@ -414,6 +439,7 @@ napi_value EnumeratePcmDevices(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
 
         handle_error();
+        snd_lib_error_set_handler(NULL);
         return returnObj;
     }
 
@@ -464,6 +490,7 @@ napi_value EnumeratePcmDevices(napi_env env, napi_callback_info info)
 
     //Free hint buffer too
     snd_device_name_free_hint((void**)hints);
+    snd_lib_error_set_handler(NULL);
 
     return deviceArray;
 }
