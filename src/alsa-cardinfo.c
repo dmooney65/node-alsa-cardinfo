@@ -165,6 +165,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, " - ");
         strcat(error, snd_strerror(err));
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -177,6 +178,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -224,6 +226,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -235,6 +238,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -267,6 +271,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -278,6 +283,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
         strcat(error, snd_strerror(err));
         snd_pcm_close(pcm);
 
+        snd_lib_error_set_handler(NULL);
         handle_error();
         return returnObj;
     }
@@ -374,6 +380,7 @@ napi_value GetCardInfo(napi_env env, napi_callback_info info)
     NAPI_CHECK( napi_set_named_property(env, returnObj, "channels", channelsArray), "Unable to create named property: channels");
     NAPI_CHECK( napi_set_named_property(env, returnObj, "sampleRates", sampleRatesArray), "Unable to create named property: sampleRates");
 
+    snd_lib_error_set_handler(NULL);
     return returnObj;
 }
 
