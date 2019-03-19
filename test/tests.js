@@ -118,7 +118,8 @@ describe('cardinfo.list()', function(){
     it('Should return all values for all device', function(done){
         
         var list = cardinfo.list();
-        for(var device in list){
+        for(var idx in list){
+            var device = list[idx];
             assert(device.name, 'Listed device should have name set');
             assert(device.desc, 'Listed device should have description set');
             assert(device.io, 'Listed device should have io direction set');
