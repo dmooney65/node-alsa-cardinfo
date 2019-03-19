@@ -105,8 +105,8 @@ describe('cardinfo.list()', function(){
 
         var list = cardinfo.list();
         var found = false;
-        for( var device in list ){
-            if(device.name === 'null'){
+        for( var idx in list ){
+            if(list[idx].name === 'null'){
                 found = true;
                 break; 
             }
