@@ -43,6 +43,12 @@ describe('cardinfo.get()', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert(info.id, 'Should have the device id');
+        assert(info.name, 'Should have the device name');
+        assert(info.subName, 'Should have the subdevice name');
         done();
     });
 
@@ -70,6 +76,12 @@ describe('cardinfo.get()', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert(info.id, 'Should have the device id');
+        assert(info.name, 'Should have the device name');
+        assert(info.subName, 'Should have the subdevice name');
         done();
     });
 
@@ -87,3 +99,31 @@ describe('cardinfo.get()', function () {
         done();
     });
 });
+
+describe('cardinfo.list()', function(){
+    it('should have NULL device in list', function(done){
+
+        var list = cardinfo.list();
+        var found = false;
+        for( var idx in list ){
+            if(list[idx].name === 'null'){
+                found = true;
+                break; 
+            }
+        }
+        assert(found, 'null device should appear in list');
+        done();
+    });
+
+    it('Should return all values for all device', function(done){
+        
+        var list = cardinfo.list();
+        for(var idx in list){
+            var device = list[idx];
+            assert(device.name, 'Listed device should have name set');
+            assert(device.desc, 'Listed device should have description set');
+            assert(device.io, 'Listed device should have io direction set');
+        }
+        done();
+    });
+})

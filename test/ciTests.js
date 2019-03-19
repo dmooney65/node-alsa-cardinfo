@@ -35,6 +35,12 @@ describe('cardinfo.get CI', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert(info.id, 'Should have the device id');
+        assert(info.name, 'Should have the device name');
+        assert(info.subName, 'Should have the subdevice name');
         done();
     });
 
@@ -62,6 +68,12 @@ describe('cardinfo.get CI', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert(info.id, 'Should have the device id');
+        assert(info.name, 'Should have the device name');
+        assert(info.subName, 'Should have the subdevice name');
         done();
     });
 
@@ -76,6 +88,31 @@ describe('cardinfo.get CI', function () {
         assert.strictEqual(channelsArray.length >= 1, true, 'Channels array should contain at leas one value');
         var sampleRatesArray = info.sampleRates;
         assert.strictEqual(sampleRatesArray.length >= 1, true, 'Sample rates array should contain at leas one value');
+        done();
+    });
+});
+
+describe('cardinfo.list CI', function(){
+    it('should have NULL device in list', function(done){
+
+        var list = cardinfo.list();
+        var found = false;
+        for( var idx in list ){
+            if(list[idx].name === 'null'){
+                found = true;
+                break; 
+            }
+        }
+        assert(found, 'null device should appear in list');
+        done();
+    });
+
+    it('Should return all values for NULL device', function(done){
+
+        var list = cardinfo.list();
+        assert(list[0].name, 'Listed device should have name set');
+        assert(list[0].desc, 'Listed device should have description set');
+        assert(list[0].io, 'Listed device should have io direction set');
         done();
     });
 });
