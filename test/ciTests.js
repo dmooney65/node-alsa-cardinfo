@@ -35,9 +35,9 @@ describe('cardinfo.get CI', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
-        assert(info.cardNum, 'Should have the card number');
-        assert(info.devNum, 'Should have the device number');
-        assert(info.subDevNum, 'Should have the subdevice number');
+        assertNotEqual(info.cardNum, null, 'Should have the card number');
+        assertNotEqual(info.devNum, null, 'Should have the device number');
+        assertNotEqual(info.subDevNum, null, 'Should have the subdevice number');
         assert(info.id, 'Should have the device id');
         assert(info.name, 'Should have the device name');
         assert(info.subName, 'Should have the subdevice name');
@@ -68,9 +68,9 @@ describe('cardinfo.get CI', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
-        assert(info.cardNum, 'Should have the card number');
-        assert(info.devNum, 'Should have the device number');
-        assert(info.subDevNum, 'Should have the subdevice number');
+        assertNotEqual(info.cardNum, null, 'Should have the card number');
+        assertNotEqual(info.devNum, null, 'Should have the device number');
+        assertNotEqual(info.subDevNum, null, 'Should have the subdevice number');
         assert(info.id, 'Should have the device id');
         assert(info.name, 'Should have the device name');
         assert(info.subName, 'Should have the subdevice name');
@@ -98,7 +98,7 @@ describe('cardinfo.list CI', function(){
         var list = cardinfo.list();
         var found = false;
         for( var device in list ){
-            if(device.id === 'null'){
+            if(device.name === 'null'){
                 found = true;
                 break; 
             }
@@ -108,7 +108,7 @@ describe('cardinfo.list CI', function(){
     });
 
     it('Should return all values for NULL device', function(done){
-        
+
         var list = cardinfo.list();
         assert(list[0].name, 'Listed device should have name set');
         assert(list[0].desc, 'Listed device should have description set');
