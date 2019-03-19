@@ -43,9 +43,9 @@ describe('cardinfo.get()', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
-        assertNotEqual(info.cardNum, null, 'Should have the card number');
-        assertNotEqual(info.devNum, null, 'Should have the device number');
-        assertNotEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
         assert(info.id, 'Should have the device id');
         assert(info.name, 'Should have the device name');
         assert(info.subName, 'Should have the subdevice name');
@@ -76,9 +76,9 @@ describe('cardinfo.get()', function () {
         assert(info.sampleFormats, 'Should have sampleFormats');
         assert(info.channels, 'Should have channels');
         assert(info.sampleRates, 'Should have sampleRates');
-        assertNotEqual(info.cardNum, null, 'Should have the card number');
-        assertNotEqual(info.devNum, null, 'Should have the device number');
-        assertNotEqual(info.subDevNum, null, 'Should have the subdevice number');
+        assert.notEqual(info.cardNum, null, 'Should have the card number');
+        assert.notEqual(info.devNum, null, 'Should have the device number');
+        assert.notEqual(info.subDevNum, null, 'Should have the subdevice number');
         assert(info.id, 'Should have the device id');
         assert(info.name, 'Should have the device name');
         assert(info.subName, 'Should have the subdevice name');
